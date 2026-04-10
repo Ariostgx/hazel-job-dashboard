@@ -3,52 +3,87 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="600">
 <title>Hazel Job Search — Command Center</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; padding: 16px; max-width: 1400px; margin: 0 auto; }
-.header { text-align: center; margin-bottom: 20px; padding: 16px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; border: 1px solid #334155; }
-.header h1 { font-size: 26px; color: #f1f5f9; }
-.header .sub { color: #94a3b8; font-size: 13px; margin-top: 4px; }
-.grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+.header { text-align: center; margin-bottom: 16px; padding: 16px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 12px; border: 1px solid #334155; }
+.header h1 { font-size: 24px; color: #f1f5f9; }
+.header .sub { color: #94a3b8; font-size: 12px; margin-top: 4px; }
+.tabs { display: flex; gap: 4px; margin-bottom: 14px; background: #1e293b; padding: 4px; border-radius: 10px; border: 1px solid #334155; }
+.tab-btn { flex: 1; padding: 12px 16px; background: transparent; border: none; color: #94a3b8; font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 7px; transition: all 0.15s; }
+.tab-btn:hover { color: #cbd5e1; background: #0f172a; }
+.tab-btn.active { background: #3b82f6; color: white; }
+.tab-btn .badge { display: inline-block; background: #ef4444; color: white; font-size: 10px; padding: 2px 7px; border-radius: 10px; margin-left: 6px; font-weight: 700; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
 .grid6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 16px; }
 .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-.card { background: #1e293b; border-radius: 10px; padding: 16px; text-align: center; border: 1px solid #334155; }
-.card .num { font-size: 28px; font-weight: 700; }
-.card .lbl { color: #94a3b8; font-size: 11px; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+.card { background: #1e293b; border-radius: 10px; padding: 14px; text-align: center; border: 1px solid #334155; }
+.card .num { font-size: 26px; font-weight: 700; }
+.card .lbl { color: #94a3b8; font-size: 10px; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
 .blue .num { color: #3b82f6; } .yellow .num { color: #f59e0b; } .purple .num { color: #8b5cf6; }
 .green .num { color: #22c55e; } .red .num { color: #ef4444; } .gray .num { color: #94a3b8; }
 .cyan .num { color: #06b6d4; } .orange .num { color: #fb923c; } .pink .num { color: #ec4899; }
-.section { background: #1e293b; border-radius: 10px; padding: 18px; margin-bottom: 16px; border: 1px solid #334155; }
-.section h3 { margin-bottom: 14px; color: #f1f5f9; font-size: 15px; display: flex; align-items: center; gap: 6px; }
-.section h3 .count { color: #64748b; font-weight: 400; font-size: 12px; }
+.section { background: #1e293b; border-radius: 10px; padding: 16px; margin-bottom: 14px; border: 1px solid #334155; }
+.section h3 { margin-bottom: 12px; color: #f1f5f9; font-size: 14px; display: flex; align-items: center; gap: 6px; }
+.section h3 .count { color: #64748b; font-weight: 400; font-size: 11px; }
+.muted { color: #94a3b8; font-size: 12px; }
+code { background: #0f172a; padding: 1px 6px; border-radius: 4px; font-size: 11px; }
+.todo-item { background: #0f172a; padding: 8px 12px; margin-bottom: 6px; border-radius: 6px; border-left: 3px solid; font-size: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.todo-item.checked { opacity: 0.5; text-decoration: line-through; }
+.todo-item b { color: #64748b; }
+.todo-meta { color: #64748b; font-size: 10px; flex: 1; }
+.todo-empty { color: #22c55e; padding: 8px; font-size: 12px; text-align: center; }
+.todo-notes { width: 100%; padding-left: 24px; color: #64748b; font-size: 10px; }
+.todo-check { width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; accent-color: #3b82f6; }
+.prio-badge { color: white; padding: 1px 6px; border-radius: 3px; font-size: 9px; font-weight: 700; }
+.tier-row { display: grid; grid-template-columns: 60px 1fr 80px 80px 80px 80px; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid #334155; font-size: 12px; }
+.tier-row:last-child { border-bottom: none; }
+.tier-badge { display: inline-block; padding: 3px 10px; border-radius: 4px; font-weight: 700; font-size: 10px; text-align: center; color: white; }
+.tier-a { background: #22c55e; } .tier-b { background: #3b82f6; } .tier-c { background: #94a3b8; }
 .stage { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
 .stage-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-.stage-bar { flex: 1; height: 20px; background: #334155; border-radius: 4px; overflow: hidden; position: relative; }
+.stage-bar { flex: 1; height: 18px; background: #334155; border-radius: 4px; overflow: hidden; position: relative; }
 .stage-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
-.stage-label { font-size: 12px; min-width: 90px; }
-.stage-count { font-size: 12px; min-width: 30px; text-align: right; font-weight: 600; }
+.stage-label { font-size: 11px; min-width: 88px; }
+.stage-count { font-size: 11px; min-width: 30px; text-align: right; font-weight: 600; }
 table { width: 100%; border-collapse: collapse; font-size: 12px; }
 th { text-align: left; padding: 8px 6px; border-bottom: 2px solid #334155; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 10px; }
 td { padding: 8px 6px; border-bottom: 1px solid #1e293b; }
 .match-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; background: #3b82f6; color: white; font-weight: 700; font-size: 11px; }
-.todo-item { background: #0f172a; padding: 8px 12px; margin-bottom: 6px; border-radius: 6px; border-left: 3px solid; font-size: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.todo-item b { color: #64748b; }
-.todo-meta { color: #64748b; font-size: 10px; flex: 1; }
-.todo-empty { color: #22c55e; padding: 8px; font-size: 12px; text-align: center; }
-.tier-row { display: grid; grid-template-columns: 60px 1fr 80px 80px 80px 80px; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid #334155; font-size: 12px; }
-.tier-row:last-child { border-bottom: none; }
-.tier-badge { display: inline-block; padding: 3px 10px; border-radius: 4px; font-weight: 700; font-size: 10px; text-align: center; }
-.tier-a { background: #22c55e; color: white; }
-.tier-b { background: #3b82f6; color: white; }
-.tier-c { background: #94a3b8; color: white; }
-.chart-container { background: #0f172a; border-radius: 8px; padding: 12px; }
 canvas { max-height: 220px; }
+.outreach-card { background: #0f172a; padding: 12px 14px; margin-bottom: 10px; border-radius: 8px; border-left: 3px solid #3b82f6; }
+.outreach-card.checked { opacity: 0.5; }
+.outreach-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.outreach-name { font-weight: 600; color: #f1f5f9; flex: 1; font-size: 13px; }
+.outreach-sub { color: #94a3b8; font-size: 11px; margin-bottom: 6px; padding-left: 24px; }
+.outreach-link { display: inline-block; color: #3b82f6; text-decoration: none; font-size: 11px; padding-left: 24px; }
+.outreach-link:hover { text-decoration: underline; }
+.outreach-label { color: #64748b; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin: 8px 0 4px 24px; }
+.outreach-text { background: #1e293b; padding: 10px 12px; border-radius: 6px; font-size: 12px; line-height: 1.5; color: #cbd5e1; margin-left: 24px; font-family: -apple-system, sans-serif; white-space: pre-wrap; }
+.outreach-actions { margin-top: 6px; padding-left: 24px; }
+.copy-btn { background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; transition: all 0.15s; }
+.copy-btn:hover { background: #3b82f6; color: white; border-color: #3b82f6; }
+.copy-btn.copied { background: #22c55e; color: white; border-color: #22c55e; }
+.sync-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: #1e293b; border: 1px solid #475569; }
+.sync-status { color: #cbd5e1; font-size: 12px; }
+.sync-status #sync-count { color: #3b82f6; font-weight: 700; font-size: 14px; }
+.sync-btn { background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.sync-btn.ghost { background: transparent; color: #94a3b8; border: 1px solid #475569; margin-left: 6px; }
+.sync-btn:hover { opacity: 0.9; }
+.sync-btn.copied { background: #22c55e; }
+.status-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; text-transform: uppercase; font-weight: 700; }
+.status-blocked { background: #ef4444; color: white; }
+.status-pending { background: #94a3b8; color: white; }
+.status-scheduled { background: #06b6d4; color: white; }
 @media (max-width: 900px) {
-    .grid4, .grid6 { grid-template-columns: repeat(2, 1fr); }
-    .grid2, .grid3 { grid-template-columns: 1fr; }
+  .grid6 { grid-template-columns: repeat(2, 1fr); }
+  .grid2, .grid3 { grid-template-columns: 1fr; }
+  .tab-btn { font-size: 11px; padding: 10px 8px; }
 }
 </style>
 </head>
@@ -56,163 +91,148 @@ canvas { max-height: 220px; }
 
 <div class="header">
 <h1>🔬 Hazel Job Search — Command Center</h1>
-<div class="sub">2026-04-10 · Next scan: tomorrow 9:17 AM · Last scan: 2026-04-10</div>
+<div class="sub">2026-04-10 · Auto-refresh every 10 min · Last scan: 2026-04-10</div>
 </div>
 
-<!-- KPI Cards -->
-<div class="grid6">
-<div class="card gray"><div class="num">161</div><div class="lbl">Jobs Found</div></div>
-<div class="card blue"><div class="num">44</div><div class="lbl">Companies</div></div>
-<div class="card cyan"><div class="num">308</div><div class="lbl">LinkedIn Contacts</div></div>
-<div class="card purple"><div class="num">0</div><div class="lbl">Applied</div></div>
-<div class="card green"><div class="num">0</div><div class="lbl">Offers</div></div>
-<div class="card orange"><div class="num">124</div><div class="lbl">New Today</div></div>
+<div class="tabs">
+  <button class="tab-btn active" data-tab="overview">📊 Overview</button>
+  <button class="tab-btn" data-tab="outreach">📨 Today's Outreach <span class="badge">3</span></button>
+  <button class="tab-btn" data-tab="pipeline">📈 Pipeline & Jobs</button>
 </div>
 
-<!-- TODO by Owner -->
-<div class="grid3">
-<div class="section">
-<h3>👩‍🔬 Hazel <span class="count">(3 tasks)</span></h3>
-<div class="todo-item" style="border-left-color:#ec4899"><span style="background:#ef4444;color:white;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700">P0</span> <b>#1</b> Review final CVs (V1/V2/V3) for accuracy<span class="todo-meta"></span></div><div class="todo-item" style="border-left-color:#ec4899"><span style="background:#ef4444;color:white;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700">P0</span> <b>#2</b> Update LinkedIn profile (headline/About/Skills)<span class="todo-meta"></span></div><div class="todo-item" style="border-left-color:#ec4899"><span style="background:#ef4444;color:white;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700">P0</span> <b>#3</b> Fill in STAR story details for interview prep<span class="todo-meta"></span></div>
+<div class="tab-content active" id="tab-overview">
+<div class="grid6"><div class="card gray"><div class="num">161</div><div class="lbl">Jobs Found</div></div><div class="card blue"><div class="num">44</div><div class="lbl">Companies</div></div><div class="card cyan"><div class="num">308</div><div class="lbl">LinkedIn Contacts</div></div><div class="card purple"><div class="num">0</div><div class="lbl">Applied</div></div><div class="card green"><div class="num">0</div><div class="lbl">Offers</div></div><div class="card orange"><div class="num">125</div><div class="lbl">New Today</div></div></div>
+<div class="section sync-bar">
+  <div class="sync-status">
+    <span id="sync-count">0</span> items checked.
+    Click items below to mark done, then press copy and paste the command in Discord.
+  </div>
+  <div>
+    <button class="sync-btn" id="sync-btn">📋 Copy Discord command</button>
+    <button class="sync-btn ghost" id="reset-btn">🔄 Clear local checks</button>
+  </div>
 </div>
-<div class="section">
-<h3>👨‍💻 Shuhantan <span class="count">(21 tasks)</span></h3>
-<div class="todo-item" style="border-left-color:#06b6d4"><span style="background:#ef4444;color:white;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700">P0</span> <b>#4</b> Create Gmail labels for job search<span class="todo-meta"> · 2026-04-12</span></div><div class="todo-item" style="border-left-color:#06b6d4"><span style="background:#ef4444;color:white;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700">P0</span> <b>#5</b> Decide whether to buy LinkedIn Premium Career ($30/mo)<span class="todo-meta"> · 2026-04-15</span></div><div class="todo-item" style="border-left-color:#06b6d4"><span style="background:#f59e0b;color:white;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700">P1</span> <b>#6</b> Apply to Mammoth - Associate Scientist CRISPR+NGS<span class="todo-meta"> · 2026-04-14</span></div><div class="todo-item" style="border-left-color:#06b6d4"><span style="background:#f59e0b;color:white;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700">P1</span> <b>#7</b> Apply to Mammoth - Scientist I/II CRISPR Platform<span class="todo-meta"> · 2026-04-14</span></div><div class="todo-item" style="border-left-color:#06b6d4"><span style="background:#f59e0b;color:white;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700">P1</span> <b>#8</b> Apply to Twist Bioscience - Scientist NGS Applications<span class="todo-meta"> · 2026-04-14</span></div><div class="todo-item" style="border-left-color:#06b6d4"><span style="background:#f59e0b;color:white;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700">P1</span> <b>#9</b> Apply to Veracyte - Sr Bioinformatics Scientist<span class="todo-meta"> · 2026-04-14</span></div><div class="todo-item" style="border-left-color:#06b6d4"><span style="background:#f59e0b;color:white;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700">P1</span> <b>#10</b> Apply to Freenome - Sr Computational Biologist I<span class="todo-meta"> · 2026-04-14</span></div><div class="todo-item" style="border-left-color:#06b6d4"><span style="background:#f59e0b;color:white;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700">P1</span> <b>#11</b> Apply to Pivot Bio - Fermentation Scientist I/III<span class="todo-meta"> · 2026-04-14</span></div><div class="todo-item" style="border-left-color:#06b6d4"><span style="background:#f59e0b;color:white;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700">P1</span> <b>#12</b> Apply to CareDx - Scientist I/II R&D<span class="todo-meta"> · 2026-04-14</span></div><div class="todo-item" style="border-left-color:#06b6d4"><span style="background:#f59e0b;color:white;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700">P1</span> <b>#13</b> Apply to Natera - Scientist R&D (via new Greenhouse access)<span class="todo-meta"> · 2026-04-14</span></div>
-</div>
-<div class="section">
-<h3>🤖 Claude <span class="count">(2 tasks)</span></h3>
-<div class="todo-item" style="border-left-color:#8b5cf6"><span style="background:#3b82f6;color:white;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700">P2</span> <b>#24</b> Rewrite LinkedIn Top 20 notes for 300-char Premium tier<span class="todo-meta"> · 2026-04-14</span></div><div class="todo-item" style="border-left-color:#8b5cf6"><span style="background:#94a3b8;color:white;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700">P3</span> <b>#28</b> Build Workday CDP browser automation<span class="todo-meta"></span></div>
-</div>
-</div>
-
-<!-- Priority View -->
-<div class="grid3">
-<div class="section">
-<h3>🔴 P0 Critical <span class="count">(5)</span></h3>
-<div class="todo-item" style="border-left-color:#ef4444"><b>#1</b> Review final CVs (V1/V2/V3) for accuracy<span class="todo-meta"></span></div><div class="todo-item" style="border-left-color:#ef4444"><b>#2</b> Update LinkedIn profile (headline/About/Skills)<span class="todo-meta"></span></div><div class="todo-item" style="border-left-color:#ef4444"><b>#3</b> Fill in STAR story details for interview prep<span class="todo-meta"></span></div><div class="todo-item" style="border-left-color:#ef4444"><b>#4</b> Create Gmail labels for job search<span class="todo-meta"> · due 2026-04-12</span></div><div class="todo-item" style="border-left-color:#ef4444"><b>#5</b> Decide whether to buy LinkedIn Premium Career ($30/mo)<span class="todo-meta"> · due 2026-04-15 🔒 blocked by #1</span></div>
-</div>
-<div class="section">
-<h3>🟡 P1 This Week <span class="count">(14)</span></h3>
-<div class="todo-item" style="border-left-color:#f59e0b"><b>#6</b> Apply to Mammoth - Associate Scientist CRISPR+NGS<span class="todo-meta"> · due 2026-04-14 🔒 blocked by #1</span></div><div class="todo-item" style="border-left-color:#f59e0b"><b>#7</b> Apply to Mammoth - Scientist I/II CRISPR Platform<span class="todo-meta"> · due 2026-04-14 🔒 blocked by #1</span></div><div class="todo-item" style="border-left-color:#f59e0b"><b>#8</b> Apply to Twist Bioscience - Scientist NGS Applications<span class="todo-meta"> · due 2026-04-14 🔒 blocked by #1</span></div><div class="todo-item" style="border-left-color:#f59e0b"><b>#9</b> Apply to Veracyte - Sr Bioinformatics Scientist<span class="todo-meta"> · due 2026-04-14 🔒 blocked by #1</span></div><div class="todo-item" style="border-left-color:#f59e0b"><b>#10</b> Apply to Freenome - Sr Computational Biologist I<span class="todo-meta"> · due 2026-04-14 🔒 blocked by #1</span></div><div class="todo-item" style="border-left-color:#f59e0b"><b>#11</b> Apply to Pivot Bio - Fermentation Scientist I/III<span class="todo-meta"> · due 2026-04-14 🔒 blocked by #1</span></div><div class="todo-item" style="border-left-color:#f59e0b"><b>#12</b> Apply to CareDx - Scientist I/II R&D<span class="todo-meta"> · due 2026-04-14 🔒 blocked by #1</span></div><div class="todo-item" style="border-left-color:#f59e0b"><b>#13</b> Apply to Natera - Scientist R&D (via new Greenhouse access)<span class="todo-meta"> · due 2026-04-14 🔒 blocked by #1</span></div>
-</div>
-<div class="section">
-<h3>🔵 P2 Networking <span class="count">(6)</span></h3>
-<div class="todo-item" style="border-left-color:#3b82f6"><b>#16</b> Apply to Vaxcyte positions (new coverage)<span class="todo-meta"> · due 2026-04-21 🔒 blocked by #1</span></div><div class="todo-item" style="border-left-color:#3b82f6"><b>#17</b> Apply to Ginkgo Bioworks positions (new coverage)<span class="todo-meta"> · due 2026-04-21 🔒 blocked by #1</span></div><div class="todo-item" style="border-left-color:#3b82f6"><b>#24</b> Rewrite LinkedIn Top 20 notes for 300-char Premium tier<span class="todo-meta"> · due 2026-04-14</span></div><div class="todo-item" style="border-left-color:#3b82f6"><b>#25</b> Daily job scan and summary<span class="todo-meta"></span></div><div class="todo-item" style="border-left-color:#3b82f6"><b>#26</b> Email monitoring<span class="todo-meta"></span></div><div class="todo-item" style="border-left-color:#3b82f6"><b>#27</b> Weekly 4-agent deep scan (Mon/Wed/Fri)<span class="todo-meta"></span></div>
-</div>
+<div class="grid3"><div class="section"><h3>👩‍🔬 Hazel <span class="count">(3 active)</span></h3><div class="todo-item" data-todo-id="1" style="border-left-color:#ec4899"><input type="checkbox" class="todo-check" data-id="1"><span class="prio-badge" style="background:#ef4444">P0</span><b>#1</b> Review final CVs (V1/V2/V3) for accuracy<span class="todo-meta"></span><div class="todo-notes">Confirm content accuracy before sending - no hurry</div></div><div class="todo-item" data-todo-id="2" style="border-left-color:#ec4899"><input type="checkbox" class="todo-check" data-id="2"><span class="prio-badge" style="background:#ef4444">P0</span><b>#2</b> Update LinkedIn profile (headline/About/Skills)<span class="todo-meta"></span><div class="todo-notes">Use optimization guide in wiki - no hurry</div></div><div class="todo-item" data-todo-id="3" style="border-left-color:#ec4899"><input type="checkbox" class="todo-check" data-id="3"><span class="prio-badge" style="background:#ef4444">P0</span><b>#3</b> Fill in STAR story details for interview prep<span class="todo-meta"></span><div class="todo-notes">6 core stories needed - async when free</div></div></div><div class="section"><h3>👨‍💻 Shuhantan <span class="count">(19 active)</span></h3><div class="todo-item" data-todo-id="4" style="border-left-color:#06b6d4"><input type="checkbox" class="todo-check" data-id="4"><span class="prio-badge" style="background:#ef4444">P0</span><b>#4</b> Create Gmail labels for job search<span class="todo-meta"> · 2026-04-12</span><div class="todo-notes">job/interview job/rejection job/confirmation job/recruiter</div></div><div class="todo-item" data-todo-id="5" style="border-left-color:#06b6d4"><input type="checkbox" class="todo-check" data-id="5"><span class="prio-badge" style="background:#ef4444">P0</span><b>#5</b> Decide whether to buy LinkedIn Premium Career ($30/mo)<span class="todo-meta"> · 2026-04-15</span><div class="todo-notes">Recommended 1 month subscription after CV ready</div></div><div class="todo-item" data-todo-id="6" style="border-left-color:#06b6d4"><input type="checkbox" class="todo-check" data-id="6"><span class="prio-badge" style="background:#f59e0b">P1</span><b>#6</b> Apply to Mammoth - Associate Scientist CRISPR+NGS<span class="todo-meta"> · 2026-04-14</span><div class="todo-notes">[PRIORITY] $180M Series C hiring 60 people - V2 resume via Lever</div></div><div class="todo-item" data-todo-id="7" style="border-left-color:#06b6d4"><input type="checkbox" class="todo-check" data-id="7"><span class="prio-badge" style="background:#f59e0b">P1</span><b>#7</b> Apply to Mammoth - Scientist I/II CRISPR Platform<span class="todo-meta"> · 2026-04-14</span><div class="todo-notes">[PRIORITY] Same company same priority - V2 resume</div></div><div class="todo-item" data-todo-id="8" style="border-left-color:#06b6d4"><input type="checkbox" class="todo-check" data-id="8"><span class="prio-badge" style="background:#f59e0b">P1</span><b>#8</b> Apply to Twist Bioscience - Scientist NGS Applications<span class="todo-meta"> · 2026-04-14</span><div class="todo-notes">[PRIORITY] Growing now API-available - V1 resume via Greenhouse</div></div><div class="todo-item" data-todo-id="9" style="border-left-color:#06b6d4"><input type="checkbox" class="todo-check" data-id="9"><span class="prio-badge" style="background:#f59e0b">P1</span><b>#9</b> Apply to Veracyte - Sr Bioinformatics Scientist<span class="todo-meta"> · 2026-04-14</span><div class="todo-notes">[PRIORITY] Profitable 24 roles no layoff - V1 resume via Greenhouse</div></div><div class="todo-item" data-todo-id="10" style="border-left-color:#06b6d4"><input type="checkbox" class="todo-check" data-id="10"><span class="prio-badge" style="background:#f59e0b">P1</span><b>#10</b> Apply to Freenome - Sr Computational Biologist I<span class="todo-meta"> · 2026-04-14</span><div class="todo-notes">[PRIORITY] Pre-IPO SPAC - V1 resume via Greenhouse</div></div><div class="todo-item" data-todo-id="11" style="border-left-color:#06b6d4"><input type="checkbox" class="todo-check" data-id="11"><span class="prio-badge" style="background:#f59e0b">P1</span><b>#11</b> Apply to Pivot Bio - Fermentation Scientist I/III<span class="todo-meta"> · 2026-04-14</span><div class="todo-notes">[PRIORITY] 12-month high hiring $136-170K - V3 resume</div></div><div class="todo-item" data-todo-id="12" style="border-left-color:#06b6d4"><input type="checkbox" class="todo-check" data-id="12"><span class="prio-badge" style="background:#f59e0b">P1</span><b>#12</b> Apply to CareDx - Scientist I/II R&amp;D<span class="todo-meta"> · 2026-04-14</span><div class="todo-notes">V1 resume</div></div><div class="todo-item" data-todo-id="13" style="border-left-color:#06b6d4"><input type="checkbox" class="todo-check" data-id="13"><span class="prio-badge" style="background:#f59e0b">P1</span><b>#13</b> Apply to Natera - Scientist R&amp;D (via new Greenhouse access)<span class="todo-meta"> · 2026-04-14</span><div class="todo-notes">V1 resume - newly API-available</div></div><div class="todo-item" data-todo-id="14" style="border-left-color:#06b6d4"><input type="checkbox" class="todo-check" data-id="14"><span class="prio-badge" style="background:#f59e0b">P1</span><b>#14</b> Apply to Complete Genomics - Scientist NGS<span class="todo-meta"> · 2026-04-14</span><div class="todo-notes">V1 resume - WATCH post-acquisition uncertainty</div></div><div class="todo-item" data-todo-id="15" style="border-left-color:#06b6d4"><input type="checkbox" class="todo-check" data-id="15"><span class="prio-badge" style="background:#f59e0b">P1</span><b>#15</b> Apply to LBNL/JGI Postdoc<span class="todo-meta"> · 2026-04-26</span><div class="todo-notes">Cap-exempt safety net - deadline 4/26</div></div><div class="todo-meta" style="text-align:center;padding:6px">+7 more on Pipeline tab</div></div><div class="section"><h3>🤖 Claude <span class="count">(2 active)</span></h3><div class="todo-item" data-todo-id="24" style="border-left-color:#8b5cf6"><input type="checkbox" class="todo-check" data-id="24"><span class="prio-badge" style="background:#3b82f6">P2</span><b>#24</b> Rewrite LinkedIn Top 20 notes for 300-char Premium tier<span class="todo-meta"> · 2026-04-14</span><div class="todo-notes">After Premium activated - update outreach/linkedin_top20_notes.md to use 300 cha</div></div><div class="todo-item" data-todo-id="28" style="border-left-color:#8b5cf6"><input type="checkbox" class="todo-check" data-id="28"><span class="prio-badge" style="background:#94a3b8">P3</span><b>#28</b> Build Workday CDP browser automation<span class="todo-meta"></span><div class="todo-notes">Covers ~40% of target companies</div></div></div></div><div class="grid2"><div class="section"><h3>🔴 P0 Critical <span class="count">(5)</span></h3><div class="todo-item" data-todo-id="1" style="border-left-color:#ef4444"><input type="checkbox" class="todo-check" data-id="1"><span class="prio-badge" style="background:#ef4444">P0</span><b>#1</b> Review final CVs (V1/V2/V3) for accuracy<span class="todo-meta"></span><div class="todo-notes">Confirm content accuracy before sending - no hurry</div></div><div class="todo-item" data-todo-id="2" style="border-left-color:#ef4444"><input type="checkbox" class="todo-check" data-id="2"><span class="prio-badge" style="background:#ef4444">P0</span><b>#2</b> Update LinkedIn profile (headline/About/Skills)<span class="todo-meta"></span><div class="todo-notes">Use optimization guide in wiki - no hurry</div></div><div class="todo-item" data-todo-id="3" style="border-left-color:#ef4444"><input type="checkbox" class="todo-check" data-id="3"><span class="prio-badge" style="background:#ef4444">P0</span><b>#3</b> Fill in STAR story details for interview prep<span class="todo-meta"></span><div class="todo-notes">6 core stories needed - async when free</div></div><div class="todo-item" data-todo-id="4" style="border-left-color:#ef4444"><input type="checkbox" class="todo-check" data-id="4"><span class="prio-badge" style="background:#ef4444">P0</span><b>#4</b> Create Gmail labels for job search<span class="todo-meta"> · 2026-04-12</span><div class="todo-notes">job/interview job/rejection job/confirmation job/recruiter</div></div><div class="todo-item" data-todo-id="5" style="border-left-color:#ef4444"><input type="checkbox" class="todo-check" data-id="5"><span class="prio-badge" style="background:#ef4444">P0</span><b>#5</b> Decide whether to buy LinkedIn Premium Career ($30/mo)<span class="todo-meta"> · 2026-04-15</span><div class="todo-notes">Recommended 1 month subscription after CV ready</div></div></div><div class="section"><h3>🟡 P1 This Week <span class="count">(14)</span></h3><div class="todo-item" data-todo-id="6" style="border-left-color:#f59e0b"><input type="checkbox" class="todo-check" data-id="6"><span class="prio-badge" style="background:#f59e0b">P1</span><b>#6</b> Apply to Mammoth - Associate Scientist CRISPR+NGS<span class="todo-meta"> · 2026-04-14</span><div class="todo-notes">[PRIORITY] $180M Series C hiring 60 people - V2 resume via Lever</div></div><div class="todo-item" data-todo-id="7" style="border-left-color:#f59e0b"><input type="checkbox" class="todo-check" data-id="7"><span class="prio-badge" style="background:#f59e0b">P1</span><b>#7</b> Apply to Mammoth - Scientist I/II CRISPR Platform<span class="todo-meta"> · 2026-04-14</span><div class="todo-notes">[PRIORITY] Same company same priority - V2 resume</div></div><div class="todo-item" data-todo-id="8" style="border-left-color:#f59e0b"><input type="checkbox" class="todo-check" data-id="8"><span class="prio-badge" style="background:#f59e0b">P1</span><b>#8</b> Apply to Twist Bioscience - Scientist NGS Applications<span class="todo-meta"> · 2026-04-14</span><div class="todo-notes">[PRIORITY] Growing now API-available - V1 resume via Greenhouse</div></div><div class="todo-item" data-todo-id="9" style="border-left-color:#f59e0b"><input type="checkbox" class="todo-check" data-id="9"><span class="prio-badge" style="background:#f59e0b">P1</span><b>#9</b> Apply to Veracyte - Sr Bioinformatics Scientist<span class="todo-meta"> · 2026-04-14</span><div class="todo-notes">[PRIORITY] Profitable 24 roles no layoff - V1 resume via Greenhouse</div></div><div class="todo-item" data-todo-id="10" style="border-left-color:#f59e0b"><input type="checkbox" class="todo-check" data-id="10"><span class="prio-badge" style="background:#f59e0b">P1</span><b>#10</b> Apply to Freenome - Sr Computational Biologist I<span class="todo-meta"> · 2026-04-14</span><div class="todo-notes">[PRIORITY] Pre-IPO SPAC - V1 resume via Greenhouse</div></div><div class="todo-item" data-todo-id="11" style="border-left-color:#f59e0b"><input type="checkbox" class="todo-check" data-id="11"><span class="prio-badge" style="background:#f59e0b">P1</span><b>#11</b> Apply to Pivot Bio - Fermentation Scientist I/III<span class="todo-meta"> · 2026-04-14</span><div class="todo-notes">[PRIORITY] 12-month high hiring $136-170K - V3 resume</div></div><div class="todo-item" data-todo-id="12" style="border-left-color:#f59e0b"><input type="checkbox" class="todo-check" data-id="12"><span class="prio-badge" style="background:#f59e0b">P1</span><b>#12</b> Apply to CareDx - Scientist I/II R&amp;D<span class="todo-meta"> · 2026-04-14</span><div class="todo-notes">V1 resume</div></div><div class="todo-item" data-todo-id="13" style="border-left-color:#f59e0b"><input type="checkbox" class="todo-check" data-id="13"><span class="prio-badge" style="background:#f59e0b">P1</span><b>#13</b> Apply to Natera - Scientist R&amp;D (via new Greenhouse access)<span class="todo-meta"> · 2026-04-14</span><div class="todo-notes">V1 resume - newly API-available</div></div></div></div>
 </div>
 
-<!-- Action Requests & Messages -->
-<div class="section" style="border: 2px solid #ef4444;">
-<h3>📬 Action Requests & Important Messages</h3>
-<div style="color:#cbd5e1;font-size:13px;padding:8px;background:#0f172a;border-radius:6px">
-<p><b>📧 Email Summary (last 24h):</b> 0 interview invites · 0 rejections · 0 recruiter contacts · 0 new responses</p>
-<p style="margin-top:6px"><b>⚠️ Approval Queue:</b> No items pending Shuhantan approval</p>
-<p style="margin-top:6px"><b>🔔 Hazel Action Needed:</b> 3 P0 items (CV review, LinkedIn profile, STAR stories)</p>
-<p style="margin-top:6px"><b>📊 Next Scan:</b> Tomorrow 9:17 AM · Next Brief: 9:23 AM</p>
-</div>
+<div class="tab-content" id="tab-outreach">
+<div class="section"><h3>📨 Today's Outreach Plan</h3><p class="muted">Wave 1 starts 2026-04-13 (in 3d)</p><p class="muted">Wave 1 start: 2026-04-13</p></div><div class="section"><h3>📧 Cold Emails Pending <span class="count">(3)</span></h3><div class="outreach-card" data-todo-id="ce-20"><div class="outreach-head"><input type="checkbox" class="todo-check" data-id="ce-20"><div class="outreach-name">#20 · Send cold email to Joelle Salazar (FDA referral)</div><span class="status-badge status-blocked">blocked</span></div><div class="outreach-sub">Gmail draft r2402073795557934235 ready - BLOCKED on verifying joelle.salazar@fda.hhs.gov</div></div><div class="outreach-card" data-todo-id="ce-21"><div class="outreach-head"><input type="checkbox" class="todo-check" data-id="ce-21"><div class="outreach-name">#21 · Send cold email to Autumn Kraft (FDA Bergholz alum)</div><span class="status-badge status-blocked">blocked</span></div><div class="outreach-sub">Gmail draft r-956450412593705756 ready - BLOCKED on email verify + recommend Teresa warm intro first</div></div><div class="outreach-card" data-todo-id="ce-22"><div class="outreach-head"><input type="checkbox" class="todo-check" data-id="ce-22"><div class="outreach-name">#22 · Send cold email to Alan Gutierrez (En Solución)</div><span class="status-badge status-blocked">blocked</span></div><div class="outreach-sub">Gmail draft r1712723024374324012 ready - BLOCKED Hazel needs to provide Alan email from MSU inbox</div></div></div>
 </div>
 
-<!-- Tier Matrix -->
-<div class="section">
-<h3>🎯 Tier Matrix — Application Progress by Priority</h3>
-<div class="tier-row" style="font-weight:600;color:#94a3b8;border-bottom:2px solid #334155">
-  <div>Tier</div><div>Description</div><div style="text-align:center">Total</div><div style="text-align:center">Applied</div><div style="text-align:center">Contacted</div><div style="text-align:center">Interview+</div>
-</div>
-<div class="tier-row">
-<div><span class="tier-badge tier-a">A</span></div>
-<div>Match 8-10 · Priority investments</div>
-<div style="text-align:center">43</div>
-<div style="text-align:center;color:#3b82f6;font-weight:600">0</div>
-<div style="text-align:center;color:#f59e0b">0</div>
-<div style="text-align:center;color:#22c55e">0</div>
-</div>
-<div class="tier-row">
-<div><span class="tier-badge tier-b">B</span></div>
-<div>Match 6-7 · Secondary targets</div>
-<div style="text-align:center">73</div>
-<div style="text-align:center;color:#3b82f6;font-weight:600">0</div>
-<div style="text-align:center;color:#f59e0b">0</div>
-<div style="text-align:center;color:#22c55e">0</div>
-</div>
-<div class="tier-row">
-<div><span class="tier-badge tier-c">C</span></div>
-<div>Match &lt;6 · Backup</div>
-<div style="text-align:center">32</div>
-<div style="text-align:center;color:#3b82f6;font-weight:600">0</div>
-<div style="text-align:center;color:#f59e0b">0</div>
-<div style="text-align:center;color:#22c55e">0</div>
-</div>
-</div>
+<div class="tab-content" id="tab-pipeline">
+<div class="section"><h3>🎯 Tier Matrix</h3><div class="tier-row" style="font-weight:600;color:#94a3b8;border-bottom:2px solid #334155"><div>Tier</div><div>Description</div><div style="text-align:center">Total</div><div style="text-align:center">Applied</div><div style="text-align:center">Contacted</div><div style="text-align:center">Interview+</div></div><div class="tier-row"><div><span class="tier-badge tier-a">A</span></div><div>Match 8-10 · Priority</div><div style="text-align:center">43</div><div style="text-align:center;color:#3b82f6;font-weight:600">0</div><div style="text-align:center;color:#f59e0b">0</div><div style="text-align:center;color:#22c55e">0</div></div><div class="tier-row"><div><span class="tier-badge tier-b">B</span></div><div>Match 6-7 · Secondary</div><div style="text-align:center">73</div><div style="text-align:center;color:#3b82f6;font-weight:600">0</div><div style="text-align:center;color:#f59e0b">0</div><div style="text-align:center;color:#22c55e">0</div></div><div class="tier-row"><div><span class="tier-badge tier-c">C</span></div><div>Match <6 · Backup</div><div style="text-align:center">32</div><div style="text-align:center;color:#3b82f6;font-weight:600">0</div><div style="text-align:center;color:#f59e0b">0</div><div style="text-align:center;color:#22c55e">0</div></div></div><div class="section"><h3>🤝 Networking Pipeline</h3><div class="stage"><div class="stage-dot" style="background:#06b6d4"></div><div class="stage-label">Identified</div><div class="stage-bar"><div class="stage-fill" style="background:#06b6d4;width:100%"></div></div><div class="stage-count">308</div></div><div class="stage"><div class="stage-dot" style="background:#8b5cf6"></div><div class="stage-label">Priority</div><div class="stage-bar"><div class="stage-fill" style="background:#8b5cf6;width:16%"></div></div><div class="stage-count">50</div></div><div class="stage"><div class="stage-dot" style="background:#3b82f6"></div><div class="stage-label">LinkedIn Sent</div><div class="stage-bar"><div class="stage-fill" style="background:#3b82f6;width:0%"></div></div><div class="stage-count">0</div></div><div class="stage"><div class="stage-dot" style="background:#f59e0b"></div><div class="stage-label">Email Sent</div><div class="stage-bar"><div class="stage-fill" style="background:#f59e0b;width:0%"></div></div><div class="stage-count">0</div></div><div class="stage"><div class="stage-dot" style="background:#22c55e"></div><div class="stage-label">Replied</div><div class="stage-bar"><div class="stage-fill" style="background:#22c55e;width:0%"></div></div><div class="stage-count">0</div></div></div><div class="grid2"><div class="section"><h3>📊 Tier Distribution</h3><canvas id="tierChart"></canvas></div><div class="section"><h3>⭐ Match Score Distribution</h3><canvas id="matchChart"></canvas></div></div><div class="section"><h3>🏆 Top 10 Matching Jobs</h3><table><tr><th>Company</th><th>Position</th><th>City</th><th>Match</th><th>Salary</th><th>Tier</th></tr><tr><td><b>Biolog Inc</b></td><td>DNA Scientist</td><td>Hayward</td><td style="text-align:center"><span class="match-badge">9</span></td><td>$93K-$102K</td><td>A</td></tr><tr><td><b>CDPH</b></td><td>Food Safety Research Scientist</td><td>Richmond</td><td style="text-align:center"><span class="match-badge">9</span></td><td>~$75K-$110K</td><td>A</td></tr><tr><td><b>Cepheid</b></td><td>Scientist II, Assay R&amp;D</td><td>Sunnyvale</td><td style="text-align:center"><span class="match-badge">9</span></td><td>$80K-$110K</td><td>A</td></tr><tr><td><b>Cepheid</b></td><td>Scientist I (PCR Assay Development)</td><td>Sunnyvale</td><td style="text-align:center"><span class="match-badge">9</span></td><td>$71K-$96K</td><td>A</td></tr><tr><td><b>Complete Genomics</b></td><td>Scientist (NGS)</td><td>San Jose</td><td style="text-align:center"><span class="match-badge">9</span></td><td>$118K-$147K</td><td>A</td></tr><tr><td><b>Gilead Sciences</b></td><td>Senior Scientist, QC Biologics (Microbiology)</td><td>Foster City</td><td style="text-align:center"><span class="match-badge">9</span></td><td>$158K-$204K</td><td>A</td></tr><tr><td><b>Mammoth Biosciences</b></td><td>Associate Scientist, CRISPR Platform (NGS)</td><td>Brisbane</td><td style="text-align:center"><span class="match-badge">9</span></td><td>$103K-$215K</td><td>A</td></tr><tr><td><b>Mammoth Biosciences</b></td><td>Scientist I/II - CRISPR Platform Projects</td><td>Brisbane</td><td style="text-align:center"><span class="match-badge">9</span></td><td>$103K-$215K</td><td>A</td></tr><tr><td><b>Pendulum Therapeutics</b></td><td>Scientist positions (Microbiome)</td><td>San Francisco</td><td style="text-align:center"><span class="match-badge">9</span></td><td></td><td>A</td></tr><tr><td><b>Twist Bioscience</b></td><td>Scientist / Sr Scientist (NGS Applications)</td><td>South San Franc</td><td style="text-align:center"><span class="match-badge">9</span></td><td>$127K-$200K</td><td>A</td></tr></table></div><div class="section"><h3>🤝 Top 10 Priority Contacts</h3><table><tr><th>Name</th><th>Title</th><th>Company</th><th>Score</th></tr><tr><td><b>Erik Spickard PhD</b></td><td>Scientist R&amp;D Molecular Biology Rese</td><td>Natera</td><td style="text-align:center">24</td></tr><tr><td><b>Poonam Sansanwal, PhD, PM</b></td><td>Program &amp; Portfolio Leader | IVD, Di</td><td>Cepheid</td><td style="text-align:center">22</td></tr><tr><td><b>Tara &#39;Penny&#39; Maho</b></td><td>Principal Scientist | Genome Editing &am</td><td>Mammoth Biosciences</td><td style="text-align:center">22</td></tr><tr><td><b>Yassine Rechoum</b></td><td>Clinical Genomics Scientist R&amp;D - Le</td><td>Natera</td><td style="text-align:center">22</td></tr><tr><td><b>Kai-Chun Chang</b></td><td>Scientist, Molecular Biology</td><td>Twist Bioscience</td><td style="text-align:center">21</td></tr><tr><td><b>Jacqueline Boucher</b></td><td>Scientist, Molecular Biology</td><td>Twist Bioscience</td><td style="text-align:center">21</td></tr><tr><td><b>Tia Dunbar</b></td><td>Molecular Biology Scientist, M.S. | Geno</td><td>Twist Bioscience</td><td style="text-align:center">21</td></tr><tr><td><b>Hoang Vuong</b></td><td>Molecular Biology &amp; Microbiology Sci</td><td>Cepheid (former)</td><td style="text-align:center">21</td></tr><tr><td><b>Brianna Luciani</b></td><td>Medical Laboratory Scientist II - Molecu</td><td>Cepheid</td><td style="text-align:center">21</td></tr><tr><td><b>Ritu Anwesa</b></td><td>Scientist R&amp;D @ BioMérieux | Real-ti</td><td>Cepheid (former)</td><td style="text-align:center">21</td></tr></table></div>
+<script>
+new Chart(document.getElementById('tierChart'), {
+  type: 'bar',
+  data: {
+    labels: ["A", "B", "C"],
+    datasets: [
+      {label: 'Total', data: [43, 73, 32], backgroundColor: '#475569'},
+      {label: 'Applied', data: [0, 0, 0], backgroundColor: '#3b82f6'}
+    ]
+  },
+  options: { plugins: {legend: {labels: {color: '#94a3b8'}}}, scales: {x: {ticks: {color: '#94a3b8'}}, y: {ticks: {color: '#94a3b8'}}}}
+});
+new Chart(document.getElementById('matchChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ["9-10", "7-8", "5-6", "<5"],
+    datasets: [{data: [13, 82, 55, 11], backgroundColor: ['#22c55e','#3b82f6','#f59e0b','#94a3b8']}]
+  },
+  options: {plugins: {legend: {position: 'bottom', labels: {color: '#94a3b8'}}}}
+});
+</script>
 
-<!-- Networking Pipeline -->
-<div class="section">
-<h3>🤝 Networking Pipeline</h3>
-<div class="stage"><div class="stage-dot" style="background:#06b6d4"></div><div class="stage-label">Identified</div><div class="stage-bar"><div class="stage-fill" style="background:#06b6d4;width:100%"></div></div><div class="stage-count">308</div></div>
-<div class="stage"><div class="stage-dot" style="background:#8b5cf6"></div><div class="stage-label">Priority</div><div class="stage-bar"><div class="stage-fill" style="background:#8b5cf6;width:16%"></div></div><div class="stage-count">50</div></div>
-<div class="stage"><div class="stage-dot" style="background:#3b82f6"></div><div class="stage-label">LinkedIn Sent</div><div class="stage-bar"><div class="stage-fill" style="background:#3b82f6;width:0%"></div></div><div class="stage-count">0</div></div>
-<div class="stage"><div class="stage-dot" style="background:#f59e0b"></div><div class="stage-label">Email Sent</div><div class="stage-bar"><div class="stage-fill" style="background:#f59e0b;width:0%"></div></div><div class="stage-count">0</div></div>
-<div class="stage"><div class="stage-dot" style="background:#22c55e"></div><div class="stage-label">Replied</div><div class="stage-bar"><div class="stage-fill" style="background:#22c55e;width:0%"></div></div><div class="stage-count">0</div></div>
-</div>
-
-<!-- Charts -->
-<div class="grid2">
-<div class="section">
-<h3>📊 Tier Distribution</h3>
-<canvas id="tierChart"></canvas>
-</div>
-<div class="section">
-<h3>⭐ Match Score Distribution</h3>
-<canvas id="matchChart"></canvas>
-</div>
-</div>
-
-<!-- Top Jobs -->
-<div class="section">
-<h3>🏆 Top 10 Matching Jobs</h3>
-<table>
-<tr><th>Company</th><th>Position</th><th>City</th><th>Match</th><th>Salary</th><th>Tier</th></tr>
-<tr><td><b>Biolog Inc</b></td><td>DNA Scientist</td><td>Hayward</td><td style="text-align:center"><span class="match-badge">9</span></td><td>$93K-$102K</td><td>A</td></tr><tr><td><b>CDPH</b></td><td>Food Safety Research Scientist</td><td>Richmond</td><td style="text-align:center"><span class="match-badge">9</span></td><td>~$75K-$110K</td><td>A</td></tr><tr><td><b>Cepheid</b></td><td>Scientist II, Assay R&D</td><td>Sunnyvale</td><td style="text-align:center"><span class="match-badge">9</span></td><td>$80K-$110K</td><td>A</td></tr><tr><td><b>Cepheid</b></td><td>Scientist I (PCR Assay Development)</td><td>Sunnyvale</td><td style="text-align:center"><span class="match-badge">9</span></td><td>$71K-$96K</td><td>A</td></tr><tr><td><b>Complete Genomics</b></td><td>Scientist (NGS)</td><td>San Jose</td><td style="text-align:center"><span class="match-badge">9</span></td><td>$118K-$147K</td><td>A</td></tr><tr><td><b>Gilead Sciences</b></td><td>Senior Scientist, QC Biologics (Microbiology)</td><td>Foster City</td><td style="text-align:center"><span class="match-badge">9</span></td><td>$158K-$204K</td><td>A</td></tr><tr><td><b>Mammoth Biosciences</b></td><td>Associate Scientist, CRISPR Platform (NGS)</td><td>Brisbane</td><td style="text-align:center"><span class="match-badge">9</span></td><td>$103K-$215K</td><td>A</td></tr><tr><td><b>Mammoth Biosciences</b></td><td>Scientist I/II - CRISPR Platform Projects</td><td>Brisbane</td><td style="text-align:center"><span class="match-badge">9</span></td><td>$103K-$215K</td><td>A</td></tr><tr><td><b>Pendulum Therapeutics</b></td><td>Scientist positions (Microbiome)</td><td>San Francisco</td><td style="text-align:center"><span class="match-badge">9</span></td><td></td><td>A</td></tr><tr><td><b>Twist Bioscience</b></td><td>Scientist / Sr Scientist (NGS Applications)</td><td>South San Franc</td><td style="text-align:center"><span class="match-badge">9</span></td><td>$127K-$200K</td><td>A</td></tr>
-</table>
-</div>
-
-<!-- Top Contacts -->
-<div class="section">
-<h3>🤝 Top 10 Priority Contacts</h3>
-<table>
-<tr><th>Name</th><th>Title</th><th>Company</th><th>Score</th></tr>
-<tr><td><b>Erik Spickard PhD</b></td><td>Scientist R&D Molecular Biology Research</td><td>Natera</td><td style="text-align:center">24</td></tr><tr><td><b>Poonam Sansanwal, PhD, PM</b></td><td>Program & Portfolio Leader | IVD, Diagno</td><td>Cepheid</td><td style="text-align:center">22</td></tr><tr><td><b>Tara 'Penny' Mahoney, PhD</b></td><td>Principal Scientist | Genome Editing & F</td><td>Mammoth Biosciences</td><td style="text-align:center">22</td></tr><tr><td><b>Yassine Rechoum</b></td><td>Clinical Genomics Scientist R&D - Lead o</td><td>Natera</td><td style="text-align:center">22</td></tr><tr><td><b>Kai-Chun Chang</b></td><td>Scientist, Molecular Biology</td><td>Twist Bioscience</td><td style="text-align:center">21</td></tr><tr><td><b>Jacqueline Boucher</b></td><td>Scientist, Molecular Biology</td><td>Twist Bioscience</td><td style="text-align:center">21</td></tr><tr><td><b>Tia Dunbar</b></td><td>Molecular Biology Scientist, M.S. | Geno</td><td>Twist Bioscience</td><td style="text-align:center">21</td></tr><tr><td><b>Hoang Vuong</b></td><td>Molecular Biology & Microbiology Scienti</td><td>Cepheid (former)</td><td style="text-align:center">21</td></tr><tr><td><b>Brianna Luciani</b></td><td>Medical Laboratory Scientist II - Molecu</td><td>Cepheid</td><td style="text-align:center">21</td></tr><tr><td><b>Ritu Anwesa</b></td><td>Scientist R&D @ BioMérieux | Real-time P</td><td>Cepheid (former)</td><td style="text-align:center">21</td></tr>
-</table>
-</div>
-
-<div class="section">
-<h3>📈 Summary</h3>
-<p style="color:#cbd5e1;font-size:13px;line-height:1.7">
-Infra: ✅ 8 skills, 3 CVs (V1/V2/V3), Greenhouse+Lever API, daily scan loop.<br>
-Pipeline: <b>0/44</b> applied · <b>0</b> contacted · <b>0</b> in interview · <b>0</b> offers.<br>
-Blockers: Hazel's final CV review · LinkedIn profile update · STAR story details.<br>
-Next auto-scan: tomorrow 9:17 AM · Auto-renewal: every 7 days.
-</p>
 </div>
 
 <script>
-new Chart(document.getElementById('tierChart'), {
-type: 'bar',
-data: {
-labels: ['A', 'B', 'C'],
-datasets: [
-{label: 'Total', data: [43, 73, 32], backgroundColor: '#475569'},
-{label: 'Applied', data: [0, 0, 0], backgroundColor: '#3b82f6'}
-]
-},
-options: { plugins: {legend: {labels: {color: '#94a3b8'}}}, scales: {x: {ticks: {color: '#94a3b8'}}, y: {ticks: {color: '#94a3b8'}}}}
+// Tab switching (also lazy-init charts only when pipeline tab is shown)
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    if (btn.dataset.tab === 'pipeline') {
+      // Charts are inside pipeline tab; they get drawn on first reveal
+      window.dispatchEvent(new Event('resize'));
+    }
+  });
 });
-new Chart(document.getElementById('matchChart'), {
-type: 'doughnut',
-data: {
-labels: ['9-10', '7-8', '5-6', '<5'],
-datasets: [{data: [13, 82, 55, 11], backgroundColor: ['#22c55e','#3b82f6','#f59e0b','#94a3b8']}]
-},
-options: {plugins: {legend: {position: 'bottom', labels: {color: '#94a3b8'}}}}
+
+// Checkbox + localStorage state
+const STORAGE_KEY = 'hazel-todo-checks-v1';
+const loadChecked = () => {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+};
+const saveChecked = (ids) => localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
+
+const updateSyncCount = () => {
+  const checked = loadChecked();
+  document.getElementById('sync-count').textContent = checked.length;
+};
+
+document.querySelectorAll('.todo-check').forEach(cb => {
+  const id = cb.dataset.id;
+  const checked = loadChecked();
+  if (checked.includes(id)) {
+    cb.checked = true;
+    cb.closest('.todo-item, .outreach-card')?.classList.add('checked');
+  }
+  cb.addEventListener('change', () => {
+    let ids = loadChecked();
+    if (cb.checked) {
+      if (!ids.includes(id)) ids.push(id);
+      cb.closest('.todo-item, .outreach-card')?.classList.add('checked');
+    } else {
+      ids = ids.filter(x => x !== id);
+      cb.closest('.todo-item, .outreach-card')?.classList.remove('checked');
+    }
+    saveChecked(ids);
+    updateSyncCount();
+  });
+});
+updateSyncCount();
+
+// Sync button → copy Discord command
+document.getElementById('sync-btn')?.addEventListener('click', () => {
+  const ids = loadChecked();
+  if (!ids.length) {
+    alert('Nothing checked yet. Tick the items you finished, then try again.');
+    return;
+  }
+  // Numeric ids → "done #6 #8". Non-numeric (lk-engage-3, ce-20) → "done lk-engage-3 ce-20"
+  const cmd = 'done ' + ids.map(i => /^\d+$/.test(i) ? '#' + i : i).join(' ');
+  navigator.clipboard.writeText(cmd).then(() => {
+    const btn = document.getElementById('sync-btn');
+    btn.classList.add('copied');
+    btn.textContent = '✓ Copied — paste in Discord';
+    setTimeout(() => { btn.classList.remove('copied'); btn.textContent = '📋 Copy Discord command'; }, 2500);
+  });
+});
+
+document.getElementById('reset-btn')?.addEventListener('click', () => {
+  if (!confirm('Clear all local checkbox state? (Use this after Claude has updated todo.csv from your sync.)')) return;
+  saveChecked([]);
+  document.querySelectorAll('.todo-check').forEach(cb => {
+    cb.checked = false;
+    cb.closest('.todo-item, .outreach-card')?.classList.remove('checked');
+  });
+  updateSyncCount();
+});
+
+// Copy buttons for outreach text
+document.querySelectorAll('.copy-btn[data-copy-target]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = document.getElementById(btn.dataset.copyTarget);
+    if (!target) return;
+    navigator.clipboard.writeText(target.textContent).then(() => {
+      const orig = btn.textContent;
+      btn.classList.add('copied');
+      btn.textContent = '✓ Copied';
+      setTimeout(() => { btn.classList.remove('copied'); btn.textContent = orig; }, 1500);
+    });
+  });
 });
 </script>
 </body>
